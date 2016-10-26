@@ -46,7 +46,7 @@ class WC_SS_Plugin {
     $lead = array(
       "first" => $meta["_billing_first_name"][0],
       "last" => $meta["_billing_last_name"][0],
-      "email" => $meta["_billing_email"[0]]
+      "email" => $meta["_billing_email"][0]
     );
     var_dump($lead);
   }
