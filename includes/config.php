@@ -73,6 +73,13 @@ class WC_SS_Plugin_Config
       'wc_ss_plugin_settings'
     );
     add_settings_field(
+      'sharpspring_secret_key',
+      __( 'SharpSpring Secret Key', 'woocommerce-sharpspring' ),
+      [$this, 'sharpspring_secret_key_render'],
+      'wc_ss_plugin_settings_page',
+      'wc_ss_plugin_settings'
+    );
+    add_settings_field(
       'add_customers_automatically',
       __( 'Add customers as leads automatically', 'woocommerce-sharpspring' ),
       [$this, 'add_customers_automatically_render'],
@@ -100,6 +107,15 @@ class WC_SS_Plugin_Config
     $options = get_option( 'wc_ss_plugin_settings' );
   ?>
     <input type='text' name='wc_ss_plugin_settings[sharpspring_api_key]' value='<?php echo $options['sharpspring_api_key']; ?>'>
+  <?php
+
+  }
+
+  public function sharpspring_secret_key_render() {
+
+    $options = get_option( 'wc_ss_plugin_settings' );
+  ?>
+    <input type='text' name='wc_ss_plugin_settings[sharpspring_secret_key]' value='<?php echo $options['sharpspring_secret_key']; ?>'>
   <?php
 
   }
