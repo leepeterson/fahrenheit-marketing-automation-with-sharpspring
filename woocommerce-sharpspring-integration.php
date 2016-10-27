@@ -35,6 +35,11 @@ class WC_SS_Plugin {
   public function __construct() {
     $config = WC_SS_Plugin_Config::get_instance();
     self::$params = $config->get_options();
+    if (!(isset(self::$params["sharpspring_api_key"]) &&
+          isset(self::$params["sharpspring_secret_key"])
+    )){
+      return; 
+    }
     add_action('woocommerce_order_action_send_lead_to_sharpspring', array( $this,'send_lead_to_sharpspring'));
     add_filter('woocommerce_order_actions',  array( $this,'order_actions'), 10, 1);
   }
