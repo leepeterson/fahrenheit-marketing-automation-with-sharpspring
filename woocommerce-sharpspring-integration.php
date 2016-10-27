@@ -47,12 +47,35 @@ class WC_SS_Plugin {
 
   public function send_lead_to_sharpspring($order) {
     $meta = get_post_meta($order->id);
+
     $lead = array(
-      "first" => $meta["_billing_first_name"][0],
-      "last" => $meta["_billing_last_name"][0],
-      "email" => $meta["_billing_email"][0]
+      "firstName" => $meta["_billing_first_name"][0],
+      "lastName" => $meta["_billing_last_name"][0],
+      "emailAddress" => $meta["_billing_email"][0]
     );
     $order->add_order_note('Attempting to send lead to SharpSpring: ' . join(',', $lead));
+
+    $method = 'createLeads';
+    $requestID = $order->id;
+
+    $data = array(
+      'method' => $method,
+      'params' => $lead,
+      'id' => $requestID
+    );
+
+    $queryString = http_build_query(array(
+      'accountID' => self::$params["sharpspring_api_key"],
+      'secretKey' => self::$params["sharpspring_secret_key"]
+    ));
+    $url = "http://api.sharpspring.com/pubapi/v1/?$queryString";
+    $args = array(
+      'headers' => array('Content-Type' => 'application/json; charset=utf-8'),
+      'body' => json_encode($data)
+    );
+
+    $response = wp_remote_post($url, $args);
+    add_post_meta($order->id, '_ss_import_result', $response);
   }
 
   public function order_actions($actions) {
