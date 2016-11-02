@@ -143,7 +143,7 @@ class WC_SS_Plugin_Config
 
     $options = get_option( 'wc_ss_plugin_settings' );
   ?>
-    <input type='checkbox' name='wc_ss_plugin_settings[add_customers_automatically]' <?php checked('on', $options['add_customers_automatically'], true); ?>'>
+    <input type='checkbox' name='wc_ss_plugin_settings[add_customers_automatically]' <?php checked('on', $options['add_customers_automatically'], true); ?>>
   <?php
 
   }
