@@ -18,6 +18,10 @@ class WC_SS_Plugin_Config
 
     self::$_options = get_option( 'wc_ss_plugin_settings' );
 
+    if (empty(self::$_options['store_name'])){
+      self::$_options['store_name'] = get_bloginfo('name');
+    }
+
     add_action( 'admin_menu', [$this, 'add_admin_menu'] );
     add_action( 'admin_init', [$this, 'settings_init'] );
 
@@ -80,6 +84,13 @@ class WC_SS_Plugin_Config
       'wc_ss_plugin_settings'
     );
     add_settings_field(
+      'store_name',
+      __( 'Store Name', 'woocommerce-sharpspring' ),
+      [$this, 'store_name_render'],
+      'wc_ss_plugin_settings_page',
+      'wc_ss_plugin_settings'
+    );
+    add_settings_field(
       'add_customers_automatically',
       __( 'Add customers as leads automatically', 'woocommerce-sharpspring' ),
       [$this, 'add_customers_automatically_render'],
@@ -120,6 +131,14 @@ class WC_SS_Plugin_Config
 
   }
 
+  public function store_name_render() {
+
+    $options = get_option( 'wc_ss_plugin_settings' );
+  ?>
+    <input type='text' name='wc_ss_plugin_settings[store_name]' value='<?php echo $options['store_name']; ?>'>
+  <?php
+
+  }
   public function add_customers_automatically_render() {
 
     $options = get_option( 'wc_ss_plugin_settings' );
