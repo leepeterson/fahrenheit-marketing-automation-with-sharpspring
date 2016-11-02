@@ -43,6 +43,7 @@ class WC_SS_Plugin {
     add_action('woocommerce_order_action_send_lead_to_sharpspring', array( $this,'send_lead_to_sharpspring'));
     add_filter('woocommerce_order_actions',  array( $this,'order_actions'), 10, 1);
     add_action('add_meta_boxes', array( $this,'order_metabox'));
+    add_action('woocommerce_cart_loaded_from_session', array( $this, 'shopping_cart_tracking' ), 10);
   }
 
   public function send_lead_to_sharpspring($order) {
@@ -101,6 +102,25 @@ class WC_SS_Plugin {
       }
     }
     echo "</dl>";
+  }
+
+  public function shopping_cart_tracking() {
+    wp_register_script( 'ss_shopping_cart_tracking',
+      plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
+
+    $cart = WC()->cart;
+
+    $data = array(
+      'total'                 => $cart->total,
+      'tax_total'             => $cart->tax_total,
+      'shipping_total'        => $cart->shipping_total,
+      'cart_contents'         => $cart->cart_contents,
+      'removed_cart_contents' => $cart->removed_cart_contents,
+      'store_name'            => self::$params['store_name']
+    );
+    wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $data );
+
+    wp_enqueue_script( 'ss_shopping_cart_tracking' );
   }
 }
 
