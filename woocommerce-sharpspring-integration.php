@@ -36,14 +36,18 @@ class WC_SS_Plugin {
     $config = WC_SS_Plugin_Config::get_instance();
     self::$params = $config->get_options();
     if (!(isset(self::$params["sharpspring_api_key"]) &&
-          isset(self::$params["sharpspring_secret_key"])
+          isset(self::$params["sharpspring_secret_key"]) &&
+          isset(self::$params["sharpspring_domain"]) &&
+          isset(self::$params["sharpspring_account"])
     )){
       return; 
     }
     add_action('woocommerce_order_action_send_lead_to_sharpspring', array( $this,'send_lead_to_sharpspring'));
     add_filter('woocommerce_order_actions',  array( $this,'order_actions'), 10, 1);
     add_action('add_meta_boxes', array( $this,'order_metabox'));
+    add_action('woocommerce_cart_loaded_from_session', array( $this, 'page_tracking' ), 10);
     add_action('woocommerce_cart_loaded_from_session', array( $this, 'shopping_cart_tracking' ), 10);
+    add_action('woocommerce_thankyou', array( $this, 'order_tracking' ), 10, 1);
   }
 
   public function send_lead_to_sharpspring($order) {
@@ -104,6 +108,31 @@ class WC_SS_Plugin {
     echo "</dl>";
   }
 
+  public function get_transaction_id() {
+    if (WC()->session->__isset('ss_transaction_id')){
+      return WC()->session->get('ss_transaction_id');
+    } else {
+
+      $new_transaction_id = rand(1000,5000) . time();
+      WC()->session->set('ss_transaction_id', $new_transaction_id);
+
+      return $new_transaction_id;
+    }
+  }
+
+  public function page_tracking() {
+    wp_register_script ('ss_page_tracking',
+      plugins_url('scripts/ss_page_tracking.js', __FILE__), null, null, true);
+
+    $ss_account_settings = array(
+      'domain'  => self::$params['sharpspring_domain'],
+      'account' => self::$params['sharpspring_account']
+    );
+
+    wp_localize_script( 'ss_page_tracking', 'ss_account_settings', $ss_account_settings );
+    wp_enqueue_script( 'ss_page_tracking' );
+  }
+
   public function shopping_cart_tracking() {
     wp_register_script( 'ss_shopping_cart_tracking',
       plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
@@ -111,11 +140,9 @@ class WC_SS_Plugin {
     $cart = WC()->cart;
     $customer = WC()->customer;
 
-    // TODO: get/set unique transactionID in session
-
     $tracking_data = array(
       'transaction_data'      => array(
-        'transactionID'   => '12345',
+        'transactionID'   => $this->get_transaction_id(),
         'store_name'      => self::$params['store_name'],
         'total'           => $cart->total,
         'tax'             => $cart->tax_total,
@@ -132,6 +159,26 @@ class WC_SS_Plugin {
     wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
 
     wp_enqueue_script( 'ss_shopping_cart_tracking' );
+  }
+
+  public function order_tracking($order_id) {
+    wp_register_script( 'ss_order_tracking',
+      plugins_url('scripts/ss_order_tracking.js', __FILE__), null, null, true);
+
+    $transactionID = $this->get_transaction_id();
+
+    $order = new WC_Order($order_id);
+    add_post_meta($order_id, 'ss_transaction_id', $transactionID);
+    $order->add_order_note('Sent transactionID ' . $transactionID . ' to SharpSpring');
+
+    WC()->session->__unset('ss_transaction_id');
+
+    $tracking_data = array(
+      'transactionID' => $transactionID
+    );
+
+    wp_localize_script( 'ss_order_tracking', 'ss_order_tracking_data', $tracking_data );
+    wp_enqueue_script( 'ss_order_tracking' );
   }
 }
 

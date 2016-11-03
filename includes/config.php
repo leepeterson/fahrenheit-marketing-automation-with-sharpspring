@@ -84,6 +84,20 @@ class WC_SS_Plugin_Config
       'wc_ss_plugin_settings'
     );
     add_settings_field(
+      'sharpspring_domain',
+      __( 'SharpSpring Domain', 'woocommerce-sharpspring' ),
+      [$this, 'sharpspring_domain_render'],
+      'wc_ss_plugin_settings_page',
+      'wc_ss_plugin_settings'
+    );
+    add_settings_field(
+      'sharpspring_account',
+      __( 'SharpSpring Account', 'woocommerce-sharpspring' ),
+      [$this, 'sharpspring_account_render'],
+      'wc_ss_plugin_settings_page',
+      'wc_ss_plugin_settings'
+    );
+    add_settings_field(
       'store_name',
       __( 'Store Name', 'woocommerce-sharpspring' ),
       [$this, 'store_name_render'],
@@ -127,6 +141,24 @@ class WC_SS_Plugin_Config
     $options = get_option( 'wc_ss_plugin_settings' );
   ?>
     <input type='text' name='wc_ss_plugin_settings[sharpspring_secret_key]' value='<?php echo $options['sharpspring_secret_key']; ?>'>
+  <?php
+
+  }
+
+  public function sharpspring_domain_render() {
+
+    $options = get_option( 'wc_ss_plugin_settings' );
+  ?>
+    <input type='text' name='wc_ss_plugin_settings[sharpspring_domain]' value='<?php echo $options['sharpspring_domain']; ?>'>
+  <?php
+
+  }
+
+  public function sharpspring_account_render() {
+
+    $options = get_option( 'wc_ss_plugin_settings' );
+  ?>
+    <input type='text' name='wc_ss_plugin_settings[sharpspring_account]' value='<?php echo $options['sharpspring_account']; ?>'>
   <?php
 
   }
