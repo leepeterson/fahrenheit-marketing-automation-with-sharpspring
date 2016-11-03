@@ -162,6 +162,12 @@ class WC_SS_Plugin {
   }
 
   public function order_tracking($order_id) {
+
+    if (get_post_meta($order_id, 'ss_transaction_id', true)){
+      // Only track order completion once
+      return;
+    }
+
     wp_register_script( 'ss_order_tracking',
       plugins_url('scripts/ss_order_tracking.js', __FILE__), null, null, true);
 
