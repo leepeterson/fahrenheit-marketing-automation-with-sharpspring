@@ -149,7 +149,7 @@ class WC_SS_Plugin_Config
 
     $options = get_option( 'wc_ss_plugin_settings' );
   ?>
-    <input type='text' name='wc_ss_plugin_settings[sharpspring_domain]' value='<?php echo $options['sharpspring_domain']; ?>'>
+    <input type='text' name='wc_ss_plugin_settings[sharpspring_domain]' value='<?php echo $options['sharpspring_domain']; ?>' placeholder="https://koi-XXXXXX.marketingautomation.services/net">
   <?php
 
   }
@@ -158,7 +158,7 @@ class WC_SS_Plugin_Config
 
     $options = get_option( 'wc_ss_plugin_settings' );
   ?>
-    <input type='text' name='wc_ss_plugin_settings[sharpspring_account]' value='<?php echo $options['sharpspring_account']; ?>'>
+    <input type='text' name='wc_ss_plugin_settings[sharpspring_account]' value='<?php echo $options['sharpspring_account']; ?>' placeholder="KOI-XXXXXXXXXXX">
   <?php
 
   }
