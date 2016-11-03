@@ -45,9 +45,12 @@ class WC_SS_Plugin {
     add_action('woocommerce_order_action_send_lead_to_sharpspring', array( $this,'send_lead_to_sharpspring'));
     add_filter('woocommerce_order_actions',  array( $this,'order_actions'), 10, 1);
     add_action('add_meta_boxes', array( $this,'order_metabox'));
-    add_action('woocommerce_cart_loaded_from_session', array( $this, 'page_tracking' ), 10);
+    add_action('wp_enqueue_scripts', array( $this, 'page_tracking' ), 10);
     add_action('woocommerce_cart_loaded_from_session', array( $this, 'shopping_cart_tracking' ), 10);
     add_action('woocommerce_thankyou', array( $this, 'order_tracking' ), 10, 1);
+
+    wp_register_script( 'ss_shopping_cart_tracking',
+      plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
   }
 
   public function send_lead_to_sharpspring($order) {
@@ -134,8 +137,11 @@ class WC_SS_Plugin {
   }
 
   public function shopping_cart_tracking() {
-    wp_register_script( 'ss_shopping_cart_tracking',
-      plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
+    if (defined('DOING_AJAX')){ return; }
+
+    if (!is_user_logged_in()){
+      return;
+    }
 
     $cart = WC()->cart;
     $customer = WC()->customer;
@@ -168,9 +174,6 @@ class WC_SS_Plugin {
       return;
     }
 
-    wp_register_script( 'ss_order_tracking',
-      plugins_url('scripts/ss_order_tracking.js', __FILE__), null, null, true);
-
     $transactionID = $this->get_transaction_id();
 
     $order = new WC_Order($order_id);
@@ -183,8 +186,12 @@ class WC_SS_Plugin {
       'transactionID' => $transactionID
     );
 
-    wp_localize_script( 'ss_order_tracking', 'ss_order_tracking_data', $tracking_data );
-    wp_enqueue_script( 'ss_order_tracking' );
+    wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
+
+    wp_enqueue_script( 'ss_shopping_cart_tracking' );
+
+    WC()->session->__unset('ss_transaction_id');
+
   }
 }
 
