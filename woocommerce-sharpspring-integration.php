@@ -109,21 +109,21 @@ class WC_SS_Plugin {
       plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
 
     $cart = WC()->cart;
+    $customer = WC()->customer;
 
     // TODO: get/set unique transactionID in session
-    // TODO: default to WC customer location, otherwise use dummy location data
 
     $tracking_data = array(
       'transaction_data'      => array(
-        'transactionID'         => '12345',
-        'store_name'            => self::$params['store_name'],
-        'total'                 => $cart->total,
-        'tax'                   => $cart->tax_total,
-        'shipping'              => $cart->shipping_total,
-        'city'                  => 'Austin',
-        'state'                 => 'Texas',
-        'zipcode'               => '78759',
-        'country'               => 'USA'
+        'transactionID'   => '12345',
+        'store_name'      => self::$params['store_name'],
+        'total'           => $cart->total,
+        'tax'             => $cart->tax_total,
+        'shipping'        => $cart->shipping_total,
+        'city'            => ($customer->get_city())      ? $customer->get_city()     : 'Austin',
+        'state'           => ($customer->get_state())     ? $customer->get_state()    : 'TX',
+        'zipcode'         => ($customer->get_postcode())  ? $customer->get_postcode() : '78759',
+        'country'         => ($customer->get_country())   ? $customer->get_country()  : 'USA'
       ),
       'cart_contents'         => $cart->cart_contents,
       'removed_cart_contents' => $cart->removed_cart_contents
