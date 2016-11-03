@@ -143,13 +143,13 @@ class WC_SS_Plugin {
       return;
     }
 
-    $cart = WC()->cart;
-
-    if (empty($cart->cart_contents) && empty($cart->removed_cart_contents)){
+    if (preg_match('/order-received/', $_SERVER['REQUEST_URI'])){
       return;
     }
 
-    if (preg_match('/order-received/', $_SERVER['REQUEST_URI'])){
+    $cart = WC()->cart;
+
+    if (empty($cart->cart_contents) && empty($cart->removed_cart_contents)){
       return;
     }
 
