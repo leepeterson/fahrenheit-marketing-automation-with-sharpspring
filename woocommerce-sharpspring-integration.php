@@ -149,6 +149,10 @@ class WC_SS_Plugin {
       return;
     }
 
+    if (preg_match('/order-received/', $_SERVER['REQUEST_URI'])){
+      return;
+    }
+
     $transactionID = $this->get_transaction_id();
     $user = wp_get_current_user();
     $customer = WC()->customer;
@@ -192,7 +196,9 @@ class WC_SS_Plugin {
 
     wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
 
-    wp_enqueue_script( 'ss_shopping_cart_tracking' );
+    add_action( 'wp_enqueue_scripts', function(){
+      wp_enqueue_script( 'ss_shopping_cart_tracking' );
+    }, 20);
   }
 
   public function order_tracking($order_id) {
@@ -238,7 +244,9 @@ class WC_SS_Plugin {
 
     wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
 
-    wp_enqueue_script( 'ss_shopping_cart_tracking' );
+    add_action( 'wp_enqueue_scripts', function(){
+      wp_enqueue_script( 'ss_shopping_cart_tracking' );
+    }, 20);
 
     WC()->session->__unset('ss_transaction_id');
 
