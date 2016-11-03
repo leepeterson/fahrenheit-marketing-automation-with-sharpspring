@@ -110,15 +110,26 @@ class WC_SS_Plugin {
 
     $cart = WC()->cart;
 
-    $data = array(
-      'total'                 => $cart->total,
-      'tax_total'             => $cart->tax_total,
-      'shipping_total'        => $cart->shipping_total,
+    // TODO: get/set unique transactionID in session
+    // TODO: default to WC customer location, otherwise use dummy location data
+
+    $tracking_data = array(
+      'transaction_data'      => array(
+        'transactionID'         => '12345',
+        'store_name'            => self::$params['store_name'],
+        'total'                 => $cart->total,
+        'tax'                   => $cart->tax_total,
+        'shipping'              => $cart->shipping_total,
+        'city'                  => 'Austin',
+        'state'                 => 'Texas',
+        'zipcode'               => '78759',
+        'country'               => 'USA'
+      ),
       'cart_contents'         => $cart->cart_contents,
-      'removed_cart_contents' => $cart->removed_cart_contents,
-      'store_name'            => self::$params['store_name']
+      'removed_cart_contents' => $cart->removed_cart_contents
     );
-    wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $data );
+
+    wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
 
     wp_enqueue_script( 'ss_shopping_cart_tracking' );
   }
