@@ -144,22 +144,50 @@ class WC_SS_Plugin {
     }
 
     $cart = WC()->cart;
+
+    if (empty($cart->cart_contents) && empty($cart->removed_cart_contents)){
+      return;
+    }
+
+    $transactionID = $this->get_transaction_id();
+    $user = wp_get_current_user();
     $customer = WC()->customer;
 
     $tracking_data = array(
       'transaction_data'      => array(
-        'transactionID'   => $this->get_transaction_id(),
-        'store_name'      => self::$params['store_name'],
+        'transactionID'   => $transactionID,
+        'storeName'       => self::$params['store_name'],
         'total'           => $cart->total,
         'tax'             => $cart->tax_total,
         'shipping'        => $cart->shipping_total,
         'city'            => ($customer->get_city())      ? $customer->get_city()     : 'Austin',
         'state'           => ($customer->get_state())     ? $customer->get_state()    : 'TX',
         'zipcode'         => ($customer->get_postcode())  ? $customer->get_postcode() : '78759',
-        'country'         => ($customer->get_country())   ? $customer->get_country()  : 'USA'
+        'country'         => ($customer->get_country())   ? $customer->get_country()  : 'USA',
+        'firstName'       => $user->user_firstname,
+        'lastName'        => $user->user_lastname,
+        'emailAddress'    => $user->user_email
       ),
-      'cart_contents'         => $cart->cart_contents,
-      'removed_cart_contents' => $cart->removed_cart_contents
+      'cart_contents'     => array_map(function($item) use ($transactionID) {
+        $cats = wp_get_post_terms($item['product_id'], 'product_cat', array('fields' => 'names'));
+        return array(
+          'transactionID' => $transactionID,
+          'quantity'      => $item['quantity'],
+          'itemCode'      => $item['product_id'],
+          'category'      => $cats ? $cats[0] : 'none',
+          'productName'   => $item['data']->post->post_title
+        );
+      }, $cart->cart_contents),
+      'removed_cart_contents' => array_map(function($item) use ($transactionID) {
+        $cats = wp_get_post_terms($item['product_id'], 'product_cat', array('fields' => 'names'));
+        return array(
+          'transactionID' => $transactionID,
+          'quantity'      => $item['quantity'],
+          'itemCode'      => $item['product_id'],
+          'category'      => $cats ? $cats[0] : 'none',
+          'productName'   => $item['data']->post->post_title
+        );
+      }, $cart->removed_cart_contents)
     );
 
     wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
@@ -178,12 +206,34 @@ class WC_SS_Plugin {
 
     $order = new WC_Order($order_id);
     add_post_meta($order_id, 'ss_transaction_id', $transactionID);
-    $order->add_order_note('Sent transactionID ' . $transactionID . ' to SharpSpring');
-
-    WC()->session->__unset('ss_transaction_id');
 
     $tracking_data = array(
-      'transactionID' => $transactionID
+      'transaction_data'      => array(
+        'transactionID'   => $transactionID,
+        'storeName'       => self::$params['store_name'],
+        'total'           => $order->get_total(),
+        'tax'             => $order->get_total_tax(),
+        'shipping'        => $order->get_total_shipping(),
+        'city'            => $order->billing_city,
+        'state'           => $order->billing_state,
+        'zipcode'         => $order->billing_postcode,
+        'country'         => $order->billing_country,
+        'firstName'       => $order->billing_first_name,
+        'lastName'        => $order->billing_last_name,
+        'emailAddress'    => $order->billing_email
+      ),
+      'cart_contents'     => array_map(function($item) use ($transactionID) {
+        $cats = wp_get_post_terms($item['product_id'], 'product_cat', array('fields' => 'names'));
+        return array(
+          'transactionID' => $transactionID,
+          'quantity'      => $item['qty'],
+          'itemCode'      => $item['product_id'],
+          'price'         => round($item['line_subtotal'] / $item['qty'], 2),
+          'category'      => $cats ? $cats[0] : 'none',
+          'productName'   => $item['name']
+        );
+      }, $order->get_items()),
+      'orderComplete'     => $order_id
     );
 
     wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
