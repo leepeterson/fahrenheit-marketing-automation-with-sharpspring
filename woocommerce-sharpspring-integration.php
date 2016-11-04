@@ -33,12 +33,9 @@ class WC_SS_Plugin {
   }
 
   public function __construct() {
-    if (! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-      return;
-    }
-
     $config = WC_SS_Plugin_Config::get_instance();
     self::$params = $config->get_options();
+
     if (!(isset(self::$params["sharpspring_api_key"]) &&
           isset(self::$params["sharpspring_secret_key"]) &&
           isset(self::$params["sharpspring_domain"]) &&
@@ -46,15 +43,25 @@ class WC_SS_Plugin {
     )){
       return; 
     }
+
     add_action('woocommerce_order_action_send_lead_to_sharpspring', array( $this,'send_lead_to_sharpspring'));
     add_filter('woocommerce_order_actions',  array( $this,'order_actions'), 10, 1);
     add_action('add_meta_boxes', array( $this,'order_metabox'));
-    add_action('wp_enqueue_scripts', array( $this, 'page_tracking' ), 10);
-    add_action('woocommerce_cart_loaded_from_session', array( $this, 'shopping_cart_tracking' ), 10);
-    add_action('woocommerce_thankyou', array( $this, 'order_tracking' ), 10, 1);
 
-    wp_register_script( 'ss_shopping_cart_tracking',
-      plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
+    add_action('wp_enqueue_scripts', array( $this, 'ss_init' ), 10);
+
+    if (isset(self::$params["enable_pageview_tracking"])){
+      add_action('wp_enqueue_scripts', array( $this, 'page_tracking' ), 11);
+    }
+
+    if (isset(self::$params["enable_shopping_cart_tracking"])){
+      wp_register_script( 'ss_shopping_cart_tracking',
+        plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
+
+      add_action('woocommerce_cart_loaded_from_session', array( $this, 'shopping_cart_tracking' ), 10);
+      add_action('woocommerce_thankyou', array( $this, 'order_tracking' ), 10, 1);
+    }
+
   }
 
   public function send_lead_to_sharpspring($order) {
@@ -125,6 +132,19 @@ class WC_SS_Plugin {
 
       return $new_transaction_id;
     }
+  }
+
+  public function ss_init() {
+    wp_register_script ('ss_init',
+      plugins_url('scripts/ss_init.js', __FILE__), null, null, true);
+
+    $ss_account_settings = array(
+      'domain'  => self::$params['sharpspring_domain'],
+      'account' => self::$params['sharpspring_account']
+    );
+
+    wp_localize_script( 'ss_init', 'ss_account_settings', $ss_account_settings );
+    wp_enqueue_script( 'ss_init' );
   }
 
   public function page_tracking() {

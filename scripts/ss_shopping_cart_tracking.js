@@ -1,8 +1,8 @@
+var _ss = _ss || [];
+
 (function(){
   var data              = ss_shopping_cart_tracking_data;
   var transaction_data  = ss_shopping_cart_tracking_data.transaction_data;
-
-  _ss = window._ss || [];
 
   var debug = 0;
   if (debug) console.log(data);

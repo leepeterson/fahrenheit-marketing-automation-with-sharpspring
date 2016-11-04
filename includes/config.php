@@ -105,9 +105,16 @@ class WC_SS_Plugin_Config
       'wc_ss_plugin_settings'
     );
     add_settings_field(
-      'add_customers_automatically',
-      __( 'Add customers as leads automatically', 'woocommerce-sharpspring' ),
-      [$this, 'add_customers_automatically_render'],
+      'enable_pageview_tracking',
+      __( 'Enable Pageview Tracking', 'woocommerce-sharpspring' ),
+      [$this, 'enable_pageview_tracking_render'],
+      'wc_ss_plugin_settings_page',
+      'wc_ss_plugin_settings'
+    );
+    add_settings_field(
+      'enable_shopping_cart_tracking',
+      __( 'Enable Shopping Cart Tracking', 'woocommerce-sharpspring' ),
+      [$this, 'enable_shopping_cart_tracking_render'],
       'wc_ss_plugin_settings_page',
       'wc_ss_plugin_settings'
     );
@@ -171,11 +178,21 @@ class WC_SS_Plugin_Config
   <?php
 
   }
-  public function add_customers_automatically_render() {
+
+  public function enable_pageview_tracking_render() {
 
     $options = get_option( 'wc_ss_plugin_settings' );
   ?>
-    <input type='checkbox' name='wc_ss_plugin_settings[add_customers_automatically]' <?php checked('on', $options['add_customers_automatically'], true); ?>>
+    <input type='checkbox' name='wc_ss_plugin_settings[enable_pageview_tracking]' <?php checked('on', $options['enable_pageview_tracking'], true); ?>>
+  <?php
+
+  }
+
+  public function enable_shopping_cart_tracking_render() {
+
+    $options = get_option( 'wc_ss_plugin_settings' );
+  ?>
+    <input type='checkbox' name='wc_ss_plugin_settings[enable_shopping_cart_tracking]' <?php checked('on', $options['enable_shopping_cart_tracking'], true); ?>>
   <?php
 
   }
