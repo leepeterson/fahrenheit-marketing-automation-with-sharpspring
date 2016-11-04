@@ -33,6 +33,10 @@ class WC_SS_Plugin {
   }
 
   public function __construct() {
+    if (! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+      return;
+    }
+
     $config = WC_SS_Plugin_Config::get_instance();
     self::$params = $config->get_options();
     if (!(isset(self::$params["sharpspring_api_key"]) &&
