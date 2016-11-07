@@ -48,16 +48,13 @@ class WC_SS_Plugin {
     add_filter('woocommerce_order_actions',  array( $this,'order_actions'), 10, 1);
     add_action('add_meta_boxes', array( $this,'order_metabox'));
 
-    add_action('wp_enqueue_scripts', array( $this, 'ss_init' ), 10);
+    add_action('wp_enqueue_scripts', array( $this, 'ss_enqueue' ), 10);
 
     if (isset(self::$params["enable_pageview_tracking"])){
       add_action('wp_enqueue_scripts', array( $this, 'page_tracking' ), 11);
     }
 
     if (isset(self::$params["enable_shopping_cart_tracking"])){
-      wp_register_script( 'ss_shopping_cart_tracking',
-        plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
-
       add_action('woocommerce_cart_loaded_from_session', array( $this, 'shopping_cart_tracking' ), 10);
       add_action('woocommerce_thankyou', array( $this, 'order_tracking' ), 10, 1);
     }
@@ -134,9 +131,13 @@ class WC_SS_Plugin {
     }
   }
 
-  public function ss_init() {
+  public function ss_enqueue() {
     wp_register_script ('ss_init',
       plugins_url('scripts/ss_init.js', __FILE__), null, null, true);
+    wp_register_script ('ss_page_tracking',
+      plugins_url('scripts/ss_page_tracking.js', __FILE__), null, null, true);
+    wp_register_script( 'ss_shopping_cart_tracking',
+      plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
 
     $ss_account_settings = array(
       'domain'  => self::$params['sharpspring_domain'],
@@ -144,20 +145,21 @@ class WC_SS_Plugin {
     );
 
     wp_localize_script( 'ss_init', 'ss_account_settings', $ss_account_settings );
-    wp_enqueue_script( 'ss_init' );
+    add_action('wp_enqueue_scripts', function(){
+      wp_enqueue_script( 'ss_init' );
+    });
   }
 
   public function page_tracking() {
-    wp_register_script ('ss_page_tracking',
-      plugins_url('scripts/ss_page_tracking.js', __FILE__), null, null, true);
-
     $ss_account_settings = array(
       'domain'  => self::$params['sharpspring_domain'],
       'account' => self::$params['sharpspring_account']
     );
 
     wp_localize_script( 'ss_page_tracking', 'ss_account_settings', $ss_account_settings );
-    wp_enqueue_script( 'ss_page_tracking' );
+    add_action('wp_enqueue_scripts', function(){
+      wp_enqueue_script( 'ss_page_tracking' );
+    });
   }
 
   public function shopping_cart_tracking() {
