@@ -135,9 +135,9 @@ class WC_SS_Plugin {
     wp_register_script ('ss_init',
       plugins_url('scripts/ss_init.js', __FILE__), null, null, true);
     wp_register_script ('ss_page_tracking',
-      plugins_url('scripts/ss_page_tracking.js', __FILE__), null, null, true);
+      plugins_url('scripts/ss_page_tracking.js', __FILE__), array('ss_init'), null, true);
     wp_register_script( 'ss_shopping_cart_tracking',
-      plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), null, null, true);
+      plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), array('ss_init'), null, true);
 
     $ss_account_settings = array(
       'domain'  => self::$params['sharpspring_domain'],
@@ -145,9 +145,7 @@ class WC_SS_Plugin {
     );
 
     wp_localize_script( 'ss_init', 'ss_account_settings', $ss_account_settings );
-    add_action('wp_enqueue_scripts', function(){
-      wp_enqueue_script( 'ss_init' );
-    });
+    wp_enqueue_script( 'ss_init' );
   }
 
   public function page_tracking() {
@@ -157,9 +155,7 @@ class WC_SS_Plugin {
     );
 
     wp_localize_script( 'ss_page_tracking', 'ss_account_settings', $ss_account_settings );
-    add_action('wp_enqueue_scripts', function(){
-      wp_enqueue_script( 'ss_page_tracking' );
-    });
+    wp_enqueue_script( 'ss_page_tracking' );
   }
 
   public function shopping_cart_tracking() {
@@ -215,14 +211,13 @@ class WC_SS_Plugin {
           'quantity'      => $item['quantity'],
           'itemCode'      => $item['product_id'],
           'category'      => $cats ? $cats[0] : 'none',
-          'productName'   => $item['data']->post->post_title
+          'productName'   => ''
         );
       }, $cart->removed_cart_contents)
     );
 
-    wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
-
-    add_action( 'wp_enqueue_scripts', function(){
+    add_action( 'wp_enqueue_scripts', function() use ($tracking_data) {
+      wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
       wp_enqueue_script( 'ss_shopping_cart_tracking' );
     }, 20);
   }
@@ -269,10 +264,7 @@ class WC_SS_Plugin {
     );
 
     wp_localize_script( 'ss_shopping_cart_tracking', 'ss_shopping_cart_tracking_data', $tracking_data );
-
-    add_action( 'wp_enqueue_scripts', function(){
-      wp_enqueue_script( 'ss_shopping_cart_tracking' );
-    }, 20);
+    wp_enqueue_script( 'ss_shopping_cart_tracking' );
 
     WC()->session->__unset('ss_transaction_id');
 
