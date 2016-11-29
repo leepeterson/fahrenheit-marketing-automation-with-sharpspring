@@ -1,6 +1,6 @@
 {
-  "name": "fahrenheit-marketing/woocommerce-sharpspring-integration",
-  "description": "WooCommerce SharpSpring Integration by Fahrenheit Marketing",
+  "name": "fahrenheit-marketing/sharpspring-integration-by-fahrenheit",
+  "description": "SharpSpring Integration by Fahrenheit",
   "type": "wordpress-plugin",
   "license": "GPLv3",
   "authors": [
@@ -13,6 +13,6 @@
     "composer/installers": "~1.2"
   },
   "extra": {
-    "installer-name": "woocommerce-sharpspring-integration"
+    "installer-name": "sharpspring-integration-by-fahrenheit"
   }
 }

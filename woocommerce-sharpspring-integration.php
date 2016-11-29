@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: WooCommerce SharpSpring Integration
+ * Plugin Name: SharpSpring Integration by Fahrenheit
  * Plugin URI: https://www.fahrenheit.io/
- * Description: Add WooCommerce customers as SharpSpring leads
- * Version: 1.0.0
+ * Description: SharpSpring Integration with support for WooCommerce and Gravity Forms by Fahrenheit Marketing
+ * Version: 1.1.0
  * Author: Fahrenheit Marketing
  * Author URI: https://www.fahrenheit.io/
  * Requires at least: 4.6
@@ -12,7 +12,7 @@
  * Text Domain: humann
  * Domain Path: /i18n/languages/
  *
- * @package WooCommerce SharpSpring
+ * @package SharpSpring
  * @category Core
  * @author Fahrenheit Marketing
  */
@@ -22,18 +22,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require(__DIR__ . "/includes/config.php");
 
-class WC_SS_Plugin {
+class FM_SS_Plugin {
 
   private static $debug = false;
   private static $params;
 
   public static function get_options() {
-    $config = WC_SS_Plugin_Config::get_instance();
+    $config = FM_SS_Plugin_Config::get_instance();
     return $config->get_options();
   }
 
   public function __construct() {
-    $config = WC_SS_Plugin_Config::get_instance();
+    $config = FM_SS_Plugin_Config::get_instance();
     self::$params = $config->get_options();
 
     add_action('woocommerce_order_action_send_lead_to_sharpspring', array( $this,'send_lead_to_sharpspring'));
@@ -49,6 +49,12 @@ class WC_SS_Plugin {
     if (isset(self::$params["enable_shopping_cart_tracking"])){
       add_action('woocommerce_cart_loaded_from_session', array( $this, 'shopping_cart_tracking' ), 10);
       add_action('woocommerce_thankyou', array( $this, 'order_tracking' ), 10, 1);
+    }
+
+    if (isset(self::$params["enable_gravity_form_tracking"])){
+      add_filter('gform_form_settings', array( $this, 'gform_sharpspring_form_settings' ), 10, 2);
+      add_filter('gform_pre_form_settings_save', array( $this, 'gform_sharpspring_save_settings' ), 10, 1);
+      add_filter('gform_get_form_filter', array( $this, 'gform_add_ss_tracking' ), 10, 2);
     }
 
   }
@@ -261,7 +267,43 @@ class WC_SS_Plugin {
     WC()->session->__unset('ss_transaction_id');
 
   }
+
+  public function gform_sharpspring_form_settings($settings, $form){
+    $settings['SharpSpring Settings']['gform_sharpspring_tracking'] = '
+      <tr>
+        <th>SharpSpring Tracking Code</th>
+        <td><textarea class="fieldwidth-3" name="sharpspring_tracking_code">' . rgar($form, 'sharpspring_tracking_code') . '</textarea></td>
+      </tr>
+    ';
+    return $settings;
+  }
+
+  public function gform_sharpspring_save_settings($form){
+    $form['sharpspring_tracking_code'] = rgpost( 'sharpspring_tracking_code' );
+    return $form;
+  }
+
+  public function gform_add_ss_tracking($form_string, $form){
+    $tracking_code = rgar($form, 'sharpspring_tracking_code');
+    $form_id = $form['id'];
+    if (!empty($tracking_code)){
+      $escaped = htmlentities(str_replace( array( "__ss_noform.push(['endpoint', '", "']);" ), array('start', 'end'), $tracking_code));
+      preg_match_all('!https?://\S+!', $escaped, $tracking_url);
+      $tracking_url = str_replace("end", "", $tracking_url[0]);
+      preg_match('/start(.*?)end/', $escaped, $endpoint);
+      $tracking_code_string = "
+<script type=\"text/javascript\">
+var __ss_noform = __ss_noform || [];
+__ss_noform.push(['baseURI', '$tracking_url[0]']);
+__ss_noform.push(['form', 'gform_$form_id', '$endpoint[1]']);
+</script>
+<script type=\"text/javascript\" src=\"$tracking_url[1]\" ></script>";
+      $form_string .= $tracking_code_string;
+    }
+    return $form_string;
+  }
+
 }
 
-new WC_SS_Plugin();
+new FM_SS_Plugin();
 

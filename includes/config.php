@@ -1,6 +1,6 @@
 <?php
 
-class WC_SS_Plugin_Config
+class FM_SS_Plugin_Config
 {
 
   private static $_options;
@@ -9,14 +9,14 @@ class WC_SS_Plugin_Config
 
   public static function get_instance() {
     if ( self::$_instance == null ) {
-      self::$_instance = new WC_SS_Plugin_Config();
+      self::$_instance = new FM_SS_Plugin_Config();
     }
     return self::$_instance;
   }
 
   public function __construct() {
 
-    self::$_options = get_option( 'wc_ss_plugin_settings' );
+    self::$_options = (get_option( 'fm_ss_plugin_settings' )) ? get_option( 'fm_ss_plugin_settings' ) : get_option( 'wc_ss_plugin_settings' );
 
     if (empty(self::$_options['store_name'])){
       self::$_options['store_name'] = get_bloginfo('name');
@@ -35,7 +35,7 @@ class WC_SS_Plugin_Config
 
   public function add_admin_menu() {
 
-      add_submenu_page( 'options-general.php', 'WooCommerce SharpSpring Integration', 'WooCommerce SharpSpring', 'manage_options', 'wc-ss-plugin', [$this, 'options_page'] );
+      add_submenu_page( 'options-general.php', 'WooCommerce SharpSpring Integration', 'WooCommerce SharpSpring', 'manage_options', 'fm-ss-plugin', [$this, 'options_page'] );
 
   }
 
@@ -48,8 +48,8 @@ class WC_SS_Plugin_Config
 
 
 <?php
-    settings_fields( 'wc_ss_plugin_settings_group' );
-    do_settings_sections( 'wc_ss_plugin_settings_page' );
+    settings_fields( 'fm_ss_plugin_settings_group' );
+    do_settings_sections( 'fm_ss_plugin_settings_page' );
     submit_button();
 ?>
 
@@ -61,69 +61,101 @@ class WC_SS_Plugin_Config
 
   public function settings_init() {
 
-    register_setting( 'wc_ss_plugin_settings_group', 'wc_ss_plugin_settings' );
+    register_setting( 'fm_ss_plugin_settings_group', 'fm_ss_plugin_settings' );
 
+    // General Settings
     add_settings_section(
-      'wc_ss_plugin_settings',
-      __( 'WooCommerce SharpSpring Integration Settings', 'woocommerce-sharpspring' ),
+      'fm_ss_plugin_settings',
+      __( 'General Settings', 'woocommerce-sharpspring' ),
       [$this, 'settings_section_callback'],
-      'wc_ss_plugin_settings_page'
-    );
-    add_settings_field(
-      'sharpspring_api_key',
-      __( 'SharpSpring API Key', 'woocommerce-sharpspring' ),
-      [$this, 'sharpspring_api_key_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
-    );
-    add_settings_field(
-      'sharpspring_secret_key',
-      __( 'SharpSpring Secret Key', 'woocommerce-sharpspring' ),
-      [$this, 'sharpspring_secret_key_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
+      'fm_ss_plugin_settings_page'
     );
     add_settings_field(
       'sharpspring_domain',
       __( 'SharpSpring Domain', 'woocommerce-sharpspring' ),
       [$this, 'sharpspring_domain_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_settings'
     );
     add_settings_field(
       'sharpspring_account',
       __( 'SharpSpring Account', 'woocommerce-sharpspring' ),
       [$this, 'sharpspring_account_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
-    );
-    add_settings_field(
-      'store_name',
-      __( 'Store Name', 'woocommerce-sharpspring' ),
-      [$this, 'store_name_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_settings'
     );
     add_settings_field(
       'enable_pageview_tracking',
       __( 'Enable Pageview Tracking', 'woocommerce-sharpspring' ),
       [$this, 'enable_pageview_tracking_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_settings'
+    );
+
+    // Gravity Forms
+    add_settings_section(
+      'fm_ss_plugin_gf_settings',
+      __( 'Gravity Forms SharpSpring Integration Settings', 'woocommerce-sharpspring' ),
+      [$this, 'gf_settings_section_callback'],
+      'fm_ss_plugin_settings_page'
+    );
+    add_settings_field(
+      'enable_gravity_form_tracking',
+      __( 'Enable Gravity Form Tracking', 'woocommerce-sharpspring' ),
+      [$this, 'enable_gravity_form_tracking_render'],
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_gf_settings'
+    );
+
+    // WooCommerce
+    add_settings_section(
+      'fm_ss_plugin_wc_settings',
+      __( 'WooCommerce SharpSpring Integration Settings', 'woocommerce-sharpspring' ),
+      [$this, 'wc_settings_section_callback'],
+      'fm_ss_plugin_settings_page'
+    );
+    add_settings_field(
+      'store_name',
+      __( 'Store Name', 'woocommerce-sharpspring' ),
+      [$this, 'store_name_render'],
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_wc_settings'
     );
     add_settings_field(
       'enable_shopping_cart_tracking',
       __( 'Enable Shopping Cart Tracking', 'woocommerce-sharpspring' ),
       [$this, 'enable_shopping_cart_tracking_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_wc_settings'
+    );
+
+    // Unused
+    add_settings_section(
+      'fm_ss_plugin_unused_settings',
+      __( 'Unused Settings', 'woocommerce-sharpspring' ),
+      [$this, 'unused_settings_section_callback'],
+      'fm_ss_plugin_settings_page'
+    );
+    add_settings_field(
+      'sharpspring_api_key',
+      __( 'SharpSpring API Key', 'woocommerce-sharpspring' ),
+      [$this, 'sharpspring_api_key_render'],
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_unused_settings'
+    );
+    add_settings_field(
+      'sharpspring_secret_key',
+      __( 'SharpSpring Secret Key', 'woocommerce-sharpspring' ),
+      [$this, 'sharpspring_secret_key_render'],
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_unused_settings'
     );
     add_settings_field(
       'error_email_recipients',
       __( 'Error Email Recipients', 'woocommerce-sharpspring' ),
       [$this, 'error_email_recipients_render'],
-      'wc_ss_plugin_settings_page',
-      'wc_ss_plugin_settings'
+      'fm_ss_plugin_settings_page',
+      'fm_ss_plugin_unused_settings'
     );
 
   }
@@ -134,74 +166,101 @@ class WC_SS_Plugin_Config
 
   }
 
+  public function gf_settings_section_callback() {
+
+    echo __( 'Set your Gravity Forms SharpSpring Integration preferences', 'woocommerce-sharpspring' );
+
+  }
+
+  public function wc_settings_section_callback() {
+
+    echo __( 'Set your WooCommerce SharpSpring Integration preferences', 'woocommerce-sharpspring' );
+
+  }
+
+  public function unused_settings_section_callback() {
+
+    echo __( 'These settings are currently unused, but may be used someday.', 'woocommerce-sharpspring' );
+
+  }
+
   public function sharpspring_api_key_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='text' name='wc_ss_plugin_settings[sharpspring_api_key]' value='<?php echo $options['sharpspring_api_key']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_api_key]' value='<?php echo $options['sharpspring_api_key']; ?>'>
   <?php
 
   }
 
   public function sharpspring_secret_key_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='text' name='wc_ss_plugin_settings[sharpspring_secret_key]' value='<?php echo $options['sharpspring_secret_key']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_secret_key]' value='<?php echo $options['sharpspring_secret_key']; ?>'>
   <?php
 
   }
 
   public function sharpspring_domain_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='text' name='wc_ss_plugin_settings[sharpspring_domain]' value='<?php echo $options['sharpspring_domain']; ?>' placeholder="https://koi-XXXXXX.marketingautomation.services/net">
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_domain]' value='<?php echo $options['sharpspring_domain']; ?>' placeholder="https://koi-XXXXXX.marketingautomation.services/net">
   <?php
 
   }
 
   public function sharpspring_account_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='text' name='wc_ss_plugin_settings[sharpspring_account]' value='<?php echo $options['sharpspring_account']; ?>' placeholder="KOI-XXXXXXXXXXX">
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_account]' value='<?php echo $options['sharpspring_account']; ?>' placeholder="KOI-XXXXXXXXXXX">
   <?php
 
   }
 
   public function store_name_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='text' name='wc_ss_plugin_settings[store_name]' value='<?php echo $options['store_name']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[store_name]' value='<?php echo $options['store_name']; ?>'>
   <?php
 
   }
 
   public function enable_pageview_tracking_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='checkbox' name='wc_ss_plugin_settings[enable_pageview_tracking]' <?php checked('on', $options['enable_pageview_tracking'], true); ?>>
+    <input type='checkbox' name='fm_ss_plugin_settings[enable_pageview_tracking]' <?php checked('on', $options['enable_pageview_tracking'], true); ?>>
   <?php
 
   }
 
   public function enable_shopping_cart_tracking_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='checkbox' name='wc_ss_plugin_settings[enable_shopping_cart_tracking]' <?php checked('on', $options['enable_shopping_cart_tracking'], true); ?>>
+    <input type='checkbox' name='fm_ss_plugin_settings[enable_shopping_cart_tracking]' <?php checked('on', $options['enable_shopping_cart_tracking'], true); ?>>
+  <?php
+
+  }
+
+  public function enable_gravity_form_tracking_render() {
+
+    $options = self::$_options;
+  ?>
+    <input type='checkbox' name='fm_ss_plugin_settings[enable_gravity_form_tracking]' <?php checked('on', $options['enable_gravity_form_tracking'], true); ?>>
   <?php
 
   }
 
   public function error_email_recipients_render() {
 
-    $options = get_option( 'wc_ss_plugin_settings' );
+    $options = self::$_options;
   ?>
-    <input type='text' name='wc_ss_plugin_settings[error_email_recipients]' value='<?php echo $options['error_email_recipients']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[error_email_recipients]' value='<?php echo $options['error_email_recipients']; ?>'>
   <?php
 
   }
