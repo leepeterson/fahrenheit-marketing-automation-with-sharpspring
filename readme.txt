@@ -1,5 +1,5 @@
 === SharpSpring Integration by Fahrenheit ===
-Contributors: awesomebob
+Contributors: fahrenheitmarketing
 Tags: sharpspring, woocommerce, gravityforms, analytics, tracking
 Requires at least: 4.6
 Tested up to: 4.6
