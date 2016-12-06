@@ -36,10 +36,6 @@ class FM_SS_Plugin {
     $config = FM_SS_Plugin_Config::get_instance();
     self::$params = $config->get_options();
 
-    add_action('woocommerce_order_action_send_lead_to_sharpspring', array( $this,'send_lead_to_sharpspring'));
-    add_filter('woocommerce_order_actions',  array( $this,'order_actions'), 10, 1);
-    add_action('add_meta_boxes', array( $this,'order_metabox'));
-
     add_action('wp_enqueue_scripts', array( $this, 'ss_enqueue' ), 10);
 
     if (isset(self::$params["enable_pageview_tracking"])){
@@ -57,64 +53,6 @@ class FM_SS_Plugin {
       add_filter('gform_get_form_filter', array( $this, 'gform_add_ss_tracking' ), 10, 2);
     }
 
-  }
-
-  public function send_lead_to_sharpspring($order) {
-    $meta = get_post_meta($order->id);
-
-    $lead = array(
-      "firstName" => $meta["_billing_first_name"][0],
-      "lastName" => $meta["_billing_last_name"][0],
-      "emailAddress" => $meta["_billing_email"][0]
-    );
-    $order->add_order_note('Attempting to send lead to SharpSpring: ' . join(',', $lead));
-
-    $method = 'createLeads';
-    $requestID = $order->id;
-
-    $data = array(
-      'method' => $method,
-      'params' => $lead,
-      'id' => $requestID
-    );
-
-    $queryString = http_build_query(array(
-      'accountID' => self::$params["sharpspring_api_key"],
-      'secretKey' => self::$params["sharpspring_secret_key"]
-    ));
-    $url = "http://api.sharpspring.com/pubapi/v1/?$queryString";
-    $args = array(
-      'headers' => array('Content-Type' => 'application/json; charset=utf-8'),
-      'body' => json_encode($data)
-    );
-
-    $response = wp_remote_post($url, $args);
-    add_post_meta($order->id, '_ss_import_result', $response);
-  }
-
-  public function order_actions($actions) {
-    $actions['send_lead_to_sharpspring'] = __("Send lead to SharpSpring", 'woocommerce-sharpspring');
-    return $actions;
-  }
-
-  public function order_metabox() {
-    add_meta_box('ss-box', 'SharpSpring Data', array( $this, 'order_metabox_output' ), 'shop_order', 'normal', 'low');
-  }
-
-  public function order_metabox_output($order) {
-    $data = get_post_meta($order->ID);
-    echo "<dl>";
-    if (!empty($data)) foreach ($data as $key => $values) {
-      if (strpos($key, '_ss') === 0) {
-        foreach ($values as $value) {
-          if (isset($value)){
-            echo "<dt>$key</dt>";
-            echo '<dd><pre style="max-height: 100px; overflow-y: scroll; padding: 0.3em; border: 1px solid #ccc;">'.$value.'</pre><a href="#" style="float: right; font-size: 12px;" onclick="var event = arguments[0] || window.event; event.preventDefault(); jQuery(this).hide().parent(\'dd\').find(\'pre\').css(\'max-height\', \'none\');">expand</a><br style="clear:all"></dd>';
-          }
-        }
-      }
-    }
-    echo "</dl>";
   }
 
   public function get_transaction_id() {
