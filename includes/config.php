@@ -187,8 +187,9 @@ class FM_SS_Plugin_Config
   public function sharpspring_api_key_render() {
 
     $options = self::$_options;
+    $sharpspring_api_key = isset($options['sharpspring_api_key']) ? $options['sharpspring_api_key'] : '';
   ?>
-    <input type='text' name='fm_ss_plugin_settings[sharpspring_api_key]' value='<?php echo $options['sharpspring_api_key']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_api_key]' value='<?php echo $sharpspring_api_key; ?>'>
   <?php
 
   }
@@ -196,8 +197,9 @@ class FM_SS_Plugin_Config
   public function sharpspring_secret_key_render() {
 
     $options = self::$_options;
+    $sharpspring_secret_key = isset($options['sharpspring_secret_key']) ? $options['sharpspring_secret_key'] : '';
   ?>
-    <input type='text' name='fm_ss_plugin_settings[sharpspring_secret_key]' value='<?php echo $options['sharpspring_secret_key']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_secret_key]' value='<?php echo $sharpspring_secret_key; ?>'>
   <?php
 
   }
@@ -205,8 +207,9 @@ class FM_SS_Plugin_Config
   public function sharpspring_domain_render() {
 
     $options = self::$_options;
+    $sharpspring_domain = isset($options['sharpspring_domain']) ? $options['sharpspring_domain'] : '';
   ?>
-    <input type='text' name='fm_ss_plugin_settings[sharpspring_domain]' value='<?php echo $options['sharpspring_domain']; ?>' placeholder="https://koi-XXXXXX.marketingautomation.services/net">
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_domain]' value='<?php echo $sharpspring_domain; ?>' placeholder="https://koi-XXXXXX.marketingautomation.services/net">
   <?php
 
   }
@@ -214,8 +217,9 @@ class FM_SS_Plugin_Config
   public function sharpspring_account_render() {
 
     $options = self::$_options;
+    $sharpspring_account = isset($options['sharpspring_account']) ? $options['sharpspring_account'] : '';
   ?>
-    <input type='text' name='fm_ss_plugin_settings[sharpspring_account]' value='<?php echo $options['sharpspring_account']; ?>' placeholder="KOI-XXXXXXXXXXX">
+    <input type='text' name='fm_ss_plugin_settings[sharpspring_account]' value='<?php echo $sharpspring_account; ?>' placeholder="KOI-XXXXXXXXXXX">
   <?php
 
   }
@@ -223,8 +227,9 @@ class FM_SS_Plugin_Config
   public function store_name_render() {
 
     $options = self::$_options;
+    $store_name = isset($options['store_name']) ? $options['store_name'] : '';
   ?>
-    <input type='text' name='fm_ss_plugin_settings[store_name]' value='<?php echo $options['store_name']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[store_name]' value='<?php echo $store_name; ?>'>
   <?php
 
   }
@@ -232,8 +237,9 @@ class FM_SS_Plugin_Config
   public function enable_pageview_tracking_render() {
 
     $options = self::$_options;
+    $enable_pageview_tracking = isset($options['enable_pageview_tracking']) ? $options['enable_pageview_tracking'] : '';
   ?>
-    <input type='checkbox' name='fm_ss_plugin_settings[enable_pageview_tracking]' <?php checked('on', $options['enable_pageview_tracking'], true); ?>>
+    <input type='checkbox' name='fm_ss_plugin_settings[enable_pageview_tracking]' <?php checked('on', $enable_pageview_tracking, true); ?>>
   <?php
 
   }
@@ -241,8 +247,9 @@ class FM_SS_Plugin_Config
   public function enable_shopping_cart_tracking_render() {
 
     $options = self::$_options;
+    $enable_shopping_cart_tracking = isset($options['enable_shopping_cart_tracking']) ? $options['enable_shopping_cart_tracking'] : '';
   ?>
-    <input type='checkbox' name='fm_ss_plugin_settings[enable_shopping_cart_tracking]' <?php checked('on', $options['enable_shopping_cart_tracking'], true); ?>>
+    <input type='checkbox' name='fm_ss_plugin_settings[enable_shopping_cart_tracking]' <?php checked('on', $enable_shopping_cart_tracking, true); ?>>
   <?php
 
   }
@@ -250,8 +257,9 @@ class FM_SS_Plugin_Config
   public function enable_gravity_form_tracking_render() {
 
     $options = self::$_options;
+    $enable_gravity_form_tracking = isset($options['enable_gravity_form_tracking']) ? $options['enable_gravity_form_tracking'] : '';
   ?>
-    <input type='checkbox' name='fm_ss_plugin_settings[enable_gravity_form_tracking]' <?php checked('on', $options['enable_gravity_form_tracking'], true); ?>>
+    <input type='checkbox' name='fm_ss_plugin_settings[enable_gravity_form_tracking]' <?php checked('on', $enable_gravity_form_tracking, true); ?>>
   <?php
 
   }
@@ -259,8 +267,9 @@ class FM_SS_Plugin_Config
   public function error_email_recipients_render() {
 
     $options = self::$_options;
+    $error_email_recipients = isset($options['error_email_recipients']) ? $options['error_email_recipients'] : '';
   ?>
-    <input type='text' name='fm_ss_plugin_settings[error_email_recipients]' value='<?php echo $options['error_email_recipients']; ?>'>
+    <input type='text' name='fm_ss_plugin_settings[error_email_recipients]' value='<?php echo $error_email_recipients; ?>'>
   <?php
 
   }
