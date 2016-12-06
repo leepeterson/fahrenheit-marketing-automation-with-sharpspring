@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "composer/installers": "~1.2"
+    "composer/installers": "*"
   },
   "extra": {
     "installer-name": "sharpspring-integration-by-fahrenheit"
