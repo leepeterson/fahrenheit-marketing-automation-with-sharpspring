@@ -33,8 +33,7 @@ class FM_SS_Plugin {
   }
 
   public function __construct() {
-    $config = FM_SS_Plugin_Config::get_instance();
-    self::$params = $config->get_options();
+    self::$params = $this->get_options();
 
     add_action('wp_enqueue_scripts', array( $this, 'ss_enqueue' ), 10);
 
@@ -75,9 +74,12 @@ class FM_SS_Plugin {
     wp_register_script( 'ss_shopping_cart_tracking',
       plugins_url('scripts/ss_shopping_cart_tracking.js', __FILE__), array('ss_init'), null, true);
 
+    $domain = isset(self::$params['sharpspring_domain']) ? self::$params['sharpspring_domain'] : '';
+    $account = isset(self::$params['sharpspring_account']) ? self::$params['sharpspring_account'] : '';
+
     $ss_account_settings = array(
-      'domain'  => self::$params['sharpspring_domain'],
-      'account' => self::$params['sharpspring_account']
+      'domain'  => $domain,
+      'account' => $account
     );
 
     wp_localize_script( 'ss_init', 'ss_account_settings', $ss_account_settings );
@@ -85,9 +87,12 @@ class FM_SS_Plugin {
   }
 
   public function page_tracking() {
+    $domain = isset(self::$params['sharpspring_domain']) ? self::$params['sharpspring_domain'] : '';
+    $account = isset(self::$params['sharpspring_account']) ? self::$params['sharpspring_account'] : '';
+
     $ss_account_settings = array(
-      'domain'  => self::$params['sharpspring_domain'],
-      'account' => self::$params['sharpspring_account']
+      'domain'  => $domain,
+      'account' => $account
     );
 
     wp_localize_script( 'ss_page_tracking', 'ss_account_settings', $ss_account_settings );
@@ -114,11 +119,12 @@ class FM_SS_Plugin {
     $transactionID = $this->get_transaction_id();
     $user = wp_get_current_user();
     $customer = WC()->customer;
+    $store_name = isset(self::$params['store_name']) ? self::$params['store_name'] : '';
 
     $tracking_data = array(
       'transaction_data'      => array(
         'transactionID'   => $transactionID,
-        'storeName'       => self::$params['store_name'],
+        'storeName'       => $store_name,
         'total'           => $cart->total,
         'tax'             => $cart->tax_total,
         'shipping'        => $cart->shipping_total,
@@ -169,11 +175,12 @@ class FM_SS_Plugin {
 
     $order = new WC_Order($order_id);
     add_post_meta($order_id, 'ss_transaction_id', $transactionID);
+    $store_name = isset(self::$params['store_name']) ? self::$params['store_name'] : '';
 
     $tracking_data = array(
       'transaction_data'      => array(
         'transactionID'   => $transactionID,
-        'storeName'       => self::$params['store_name'],
+        'storeName'       => $store_name,
         'total'           => $order->get_total(),
         'tax'             => $order->get_total_tax(),
         'shipping'        => $order->get_total_shipping(),
