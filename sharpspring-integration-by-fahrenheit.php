@@ -1,7 +1,6 @@
 <?php
 /**
  * Plugin Name: SharpSpring Integration by Fahrenheit
- * Plugin URI: https://www.fahrenheit.io/
  * Description: SharpSpring Integration with support for WooCommerce and Gravity Forms by Fahrenheit Marketing
  * Version: 1.1.0
  * Author: Fahrenheit Marketing
