@@ -23,9 +23,9 @@ Configure the plugin with your SharpSpring information, and this plugin will ins
 
 == Changelog ==
 
-= 1.1.0 =
+= 0.8.0 =
 * Added support for Gravity Forms
 
-= 1.0 =
+= 0.7.0 =
 * Initial release
 
