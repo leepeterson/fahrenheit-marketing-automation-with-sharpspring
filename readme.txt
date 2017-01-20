@@ -1,4 +1,4 @@
-=== Fahrenheit Marketing Automation with Sharpspring ===
+=== Fahrenheit Marketing Automation with SharpSpring ===
 Contributors: fahrenheitmarketing, awesomebob
 Tags: sharpspring, woocommerce, gravityforms, analytics, tracking
 Requires at least: 4.6
