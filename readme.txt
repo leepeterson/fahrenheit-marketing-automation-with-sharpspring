@@ -1,4 +1,4 @@
-=== SharpSpring Integration by Fahrenheit ===
+=== Fahrenheit Marketing Automation with Sharpspring ===
 Contributors: fahrenheitmarketing, awesomebob
 Tags: sharpspring, woocommerce, gravityforms, analytics, tracking
 Requires at least: 4.6
@@ -17,7 +17,7 @@ Configure the plugin with your SharpSpring information, and this plugin will ins
 
 == Installation ==
 
-1. Upload the plugin files to the '/wp-content/plugins/sharpspring-integration-by-fahrenheit' directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the '/wp-content/plugins/fahrenheit-marketing-automation-with-sharpspring' directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Use the Settings -> SharpSpring Integration screen to configure the plugin.
 

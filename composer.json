@@ -1,6 +1,6 @@
 {
-  "name": "fahrenheit-marketing/sharpspring-integration-by-fahrenheit",
-  "description": "SharpSpring Integration by Fahrenheit",
+  "name": "fahrenheit-marketing/fahrenheit-marketing-automation-with-sharpspring",
+  "description": "Fahrenheit Marketing Automation with SharpSpring",
   "type": "wordpress-plugin",
   "license": "GPLv3",
   "authors": [
@@ -13,6 +13,6 @@
     "composer/installers": "*"
   },
   "extra": {
-    "installer-name": "sharpspring-integration-by-fahrenheit"
+    "installer-name": "fahrenheit-marketing-automation-with-sharpspring"
   }
 }

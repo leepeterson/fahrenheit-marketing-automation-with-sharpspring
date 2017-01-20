@@ -35,7 +35,7 @@ class FM_SS_Plugin_Config
 
   public function add_admin_menu() {
 
-      add_submenu_page( 'options-general.php', 'SharpSpring Integration by Fahrenheit', 'SharpSpring Integration by Fahrenheit', 'manage_options', 'fm-ss-plugin', [$this, 'options_page'] );
+      add_submenu_page( 'options-general.php', 'Fahrenheit Marketing Automation with SharpSpring', 'Fahrenheit Marketing Automation with SharpSpring', 'manage_options', 'fm-ss-plugin', [$this, 'options_page'] );
 
   }
 
@@ -43,7 +43,7 @@ class FM_SS_Plugin_Config
 
 ?>
   <div class="wrap">
-  <h1>SharpSpring Integration by Fahrenheit</h1>
+  <h1>Fahrenheit Marketing Automation with SharpSpring</h1>
   <form action='options.php' method='post'>
 
 

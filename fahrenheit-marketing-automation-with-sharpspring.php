@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: SharpSpring Integration by Fahrenheit
+ * Plugin Name: Fahrenheit Marketing Automation with SharpSpring
  * Description: SharpSpring Integration with support for WooCommerce and Gravity Forms by Fahrenheit Marketing
  * Version: 0.8.0
  * Author: Fahrenheit Marketing
@@ -11,8 +11,6 @@
  * Text Domain: humann
  * Domain Path: /i18n/languages/
  *
- * @package SharpSpring
- * @category Core
  * @author Fahrenheit Marketing
  */
 if ( ! defined( 'ABSPATH' ) ) {
