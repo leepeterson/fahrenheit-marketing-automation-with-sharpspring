@@ -10,10 +10,11 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Automatically add SharpSpring JavaScript snippets for pageview tracking, shopping cart tracking, and Gravity Forms form tracking.
 
 == Description ==
-
-This plugin simplifies the integration of SharpSpring Marketing Automation with your WooCommerce site.
+This plugin allows you to add SharpSpring Marketing Automation to your website. To use it, you will need your own SharpSpring account.
 
 Configure the plugin with your SharpSpring information, and this plugin will insert the correct code snippets on every page.
+
+This plugin is developed by Fahrenheit Marketing, a SharpSpring partner agency.
 
 == Installation ==
 
