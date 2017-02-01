@@ -11,10 +11,16 @@ Automatically add SharpSpring JavaScript snippets for pageview tracking, shoppin
 
 == Description ==
 This plugin allows you to add SharpSpring Marketing Automation to your website. To use it, you will need your own SharpSpring account.
+You can learn more about SharpSpring and sign up for a demo on their website at [https://sharpspring.com/](https://sharpspring.com/).
 
 Configure the plugin with your SharpSpring information, and this plugin will insert the correct code snippets on every page.
 
+Note that to use the SharpSpring service you will need to agree to their [terms of service](https://sharpspring.com/legal/terms-of-service/) and [privacy policy](https://sharpspring.com/legal/privacy/).
+
 This plugin is developed by Fahrenheit Marketing, a SharpSpring partner agency.
+
+This plugin communicates with SharpSpring's API and will send the relevant data directly to them.
+Your data is not shared with Fahrenheit Marketing.
 
 == Installation ==
 
