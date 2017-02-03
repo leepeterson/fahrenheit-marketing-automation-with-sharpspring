@@ -30,6 +30,9 @@ Your data is not shared with Fahrenheit Marketing.
 
 == Changelog ==
 
+= 0.8.2 =
+* Update readme to clarify need for SharpSpring account
+
 = 0.8.0 =
 * Added support for Gravity Forms
 
