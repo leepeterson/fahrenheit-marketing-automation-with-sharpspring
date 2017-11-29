@@ -114,7 +114,6 @@ class FM_SS_Plugin {
     }
 
     $transactionID = $this->get_transaction_id();
-    $user = wp_get_current_user();
     $customer = WC()->customer;
     $store_name = isset(self::$params['store_name']) ? self::$params['store_name'] : '';
 
@@ -129,9 +128,9 @@ class FM_SS_Plugin {
         'state'           => ($customer->get_state())     ? $customer->get_state()    : 'TX',
         'zipcode'         => ($customer->get_postcode())  ? $customer->get_postcode() : '78759',
         'country'         => ($customer->get_country())   ? $customer->get_country()  : 'USA',
-        'firstName'       => $user->user_firstname,
-        'lastName'        => $user->user_lastname,
-        'emailAddress'    => $user->user_email
+        'firstName'       => $customer->get_first_name(),
+        'lastName'        => $customer->get_last_name(),
+        'emailAddress'    => $customer->get_email()
       ),
       'cart_contents'     => array_map(function($item) use ($transactionID) {
         $cats = wp_get_post_terms($item['product_id'], 'product_cat', array('fields' => 'names'));
@@ -181,13 +180,13 @@ class FM_SS_Plugin {
         'total'           => $order->get_total(),
         'tax'             => $order->get_total_tax(),
         'shipping'        => $order->get_total_shipping(),
-        'city'            => $order->billing_city,
-        'state'           => $order->billing_state,
-        'zipcode'         => $order->billing_postcode,
-        'country'         => $order->billing_country,
-        'firstName'       => $order->billing_first_name,
-        'lastName'        => $order->billing_last_name,
-        'emailAddress'    => $order->billing_email
+        'city'            => $order->get_billing_city(),
+        'state'           => $order->get_billing_state(),
+        'zipcode'         => $order->get_billing_postcode(),
+        'country'         => $order->get_billing_country(),
+        'firstName'       => $order->get_billing_first_name(),
+        'lastName'        => $order->get_billing_last_name(),
+        'emailAddress'    => $order->get_billing_email()
       ),
       'cart_contents'     => array_map(function($item) use ($transactionID) {
         $cats = wp_get_post_terms($item['product_id'], 'product_cat', array('fields' => 'names'));
